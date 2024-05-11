@@ -64,6 +64,8 @@ router.post('/createitem', fetchUser, upload.single('image'), async (req, res) =
       image: imageUrl, // Store the Cloudinary image URL
     });
 
+    console.log("userid",req.user.id);
+
     res.status(201).json(newItem);
   } catch (err) {
     console.error('Error creating item:', err);

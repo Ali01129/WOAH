@@ -56,12 +56,9 @@ router.post("/highestBidder", async (req, res) => {
     if (!item) {
       return res.status(404).json({ error: "Item not found" });
     }
-
-    const itemId = item._id;
-
+    const itemId = item.id;
     // Find the highest bid for this item
     const highestBid = await Bid.findOne({ itemId }).sort({ amount: -1 });
-
     if (!highestBid) {
       // Return default values when there's no bid
       return res.status(200).json({
@@ -73,18 +70,10 @@ router.post("/highestBidder", async (req, res) => {
 
     // Find the user who placed the highest bid
     const highestBidder = await User.findById(highestBid.userId);
-
-    if (!highestBidder) {
-      return res.status(200).json({
-        highestBidderId: "NaN",
-        highestBidder: "Unknown",
-        amount: 0,
-      });
-    }
-
+    console.log(highestBidder);
     // Return the highest bidder information
     res.status(200).json({
-      highestBidderId: highestBid.userId,
+      highestBidderId: highestBidder.id,
       highestBidder: highestBidder.name,
       amount: highestBid.amount,
     });
