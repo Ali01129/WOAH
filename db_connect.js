@@ -27,6 +27,7 @@ app.use('/auth', require('./routes/auth')); // Route for authentication
 app.use('/create', require('./routes/store')); // Route for creating items
 app.use('/bid', require('./routes/auction')); // Route for bidding
 app.use('/carttwo', require('./routes/cartTwo')); // Route for managing cart
+app.use('/buy', require('./routes/buy'));
 
 // Catch-all route to serve the React app
 app.get('*', (req, res) => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/navbar.css';
 import { FaShoppingCart } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 
 const Navbar = () => {
   const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
@@ -64,7 +65,7 @@ const Navbar = () => {
           </button>
           {authToken !== null ? (
         <div className='cart' onClick={gotoCart}>
-          <FaShoppingCart />
+          <FaUser />
         </div>) : null} 
         </div>
       </ul>

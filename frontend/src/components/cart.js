@@ -9,11 +9,14 @@ const Cart = () => {
   const [cartTwo, setCartTwo] = useState([]); // Ensures it's always initialized as an array
   const [cartTwoError, setCartTwoError] = useState('');
   const [userName, setUserName] = useState('User');
+  const [bCart,setBcart]=useState([]);
+  const [bError,setBerror]=useState('');
 
   useEffect(() => {
     fetchCart();
     fetchAllCart();
     fetchUserName();
+    fetchBoughtCart();
   }, []);
 
   const fetchUserName = async () => {
@@ -45,7 +48,7 @@ const Cart = () => {
         },
       });
       if (!response.ok) { // Handle other non-200 statuses
-        setCartError('No item Found');
+        setCartError('No items auctioned yet');
         setCart([]); // Ensure it's an empty array
       } else {
         const data = await response.json();
@@ -73,7 +76,7 @@ const Cart = () => {
       });
 
       if (!response.ok) {
-        setCartTwoError('No Item Found');
+        setCartTwoError('No Items bought yet');
         setCartTwo([]); // Ensure it's an empty array
       } else {
         const data = await response.json();
@@ -91,15 +94,44 @@ const Cart = () => {
     }
   };
 
+  const fetchBoughtCart=async()=>{
+    try {
+      const response = await fetch(`${window.location.origin}/buy/boughtcart`, {
+        method: 'GET',
+        headers: {
+          'auth-token': authToken,
+        },
+      });
+
+      if (!response.ok) {
+        setBerror('No Items bought yet');
+        setBcart([]); // Ensure it's an empty array
+      } else {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setBcart(data);
+        } else {
+          setBerror('Invalid data for all carts.');
+          setBcart([]); // Ensure it's an empty array
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching all carts:', error);
+      setBerror('An error occurred while fetching all carts. Please try again later.');
+      setBcart([]); // Ensure it's an empty array
+    }
+  };
+
   return (
     <>
       <div className="cart_main">
         <div className="text" style={{ color: '#002142' }}>
-          Hello {userName}
+          Hi {userName}
         </div>
       </div>
       <div className="container">
         <hr />
+        <span style={{fontWeight:"bold",color:"#002142",fontSize:'26px'}}>Items Auctioned:</span>
       </div>
       {cartError ? (
         <div className="text-center mt-4">
@@ -110,6 +142,7 @@ const Cart = () => {
           <div key={index} className="container d-flex flex-column justify-content-center align-items-center">
             <CartItem
               pay={true}
+              feed={false}
               userId={item.userId}
               itemId={item.itemId}
               name={item.itemName}
@@ -123,6 +156,7 @@ const Cart = () => {
 
       <div className="container">
         <hr />
+        <span style={{fontWeight:"bold",color:"#002142",fontSize:'26px'}}>Payment Pending:</span>
       </div>
       {cartTwoError ? (
         <div className="text-center mt-4">
@@ -133,6 +167,26 @@ const Cart = () => {
           <div key={index} className="container d-flex flex-column justify-content-center align-items-center">
             <CartItem
               pay={false}
+              feed={false}
+              name={item.name}
+              price={item.amount}
+            />
+          </div>
+        ))
+      )}
+      <div className="container">
+        <hr />
+        <span style={{fontWeight:"bold",color:"#002142",fontSize:'26px'}}>Items Bought:</span>
+      </div>
+      {bError ? (
+        <div className="text-center mt-4">
+          <h3>{bError}</h3> {/* Display the error message */}
+        </div>
+      ) : (
+        bCart.map((item, index) => (
+          <div key={index} className="container d-flex flex-column justify-content-center align-items-center">
+            <CartItem
+              feed={true}
               name={item.name}
               price={item.amount}
             />
